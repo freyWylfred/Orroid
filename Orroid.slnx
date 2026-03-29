@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Orroid/Orroid.csproj">
+    <Deploy />
+  </Project>
+</Solution>
