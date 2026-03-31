@@ -21,10 +21,13 @@ namespace Orroid
 
         private readonly List<SkillInfo> _skills = [];
         private View? _enemyHpBar;
-        private View? _playerHpBar;
+        private View? _enemyContainer;
+        private View? _rewardContainer;
+        private TextView? _playerHpText;
         private TextView? _enemyCharacter;
+        private TextView? _expRewardText;
+        private TextView? _goldRewardText;
         private int _enemyHpBarMaxWidth;
-        private int _playerHpBarMaxWidth;
 
         private System.Timers.Timer? _gaugeTimer;
         private System.Timers.Timer? _enemyAttackTimer;
@@ -47,18 +50,18 @@ namespace Orroid
             // 敵のUI取得
             _enemyHpBar = FindViewById<View>(Resource.Id.enemyHpBar);
             _enemyCharacter = FindViewById<TextView>(Resource.Id.enemyCharacter);
+            _enemyContainer = FindViewById<View>(Resource.Id.enemyContainer);
+            _rewardContainer = FindViewById<View>(Resource.Id.rewardContainer);
+            _expRewardText = FindViewById<TextView>(Resource.Id.expRewardText);
+            _goldRewardText = FindViewById<TextView>(Resource.Id.goldRewardText);
 
             // プレイヤーのUI取得
-            _playerHpBar = FindViewById<View>(Resource.Id.playerHpBar);
+            _playerHpText = FindViewById<TextView>(Resource.Id.playerHpText);
 
             // HPバーの幅を取得（レイアウト完了後）
             _enemyHpBar!.Post(() =>
             {
                 _enemyHpBarMaxWidth = _enemyHpBar.Width;
-            });
-            _playerHpBar!.Post(() =>
-            {
-                _playerHpBarMaxWidth = _playerHpBar.Width;
             });
 
             // スキルの初期化
@@ -168,13 +171,13 @@ namespace Orroid
                 // 防御: 次の敵の攻撃を無効化
                 _isDefending = true;
 
-                // 防御エフェクト（プレイヤー側が光る）
-                _playerHpBar!.Animate()!
+                // 防御エフェクト（プレイヤーHP表示が光る）
+                _playerHpText!.Animate()!
                     .Alpha(0.5f)
                     .SetDuration(100)
                     .WithEndAction(new Java.Lang.Runnable(() =>
                     {
-                        _playerHpBar.Animate()!
+                        _playerHpText.Animate()!
                             .Alpha(1f)
                             .SetDuration(100)
                             .Start();
@@ -204,13 +207,7 @@ namespace Orroid
                 // 勝利判定
                 if (_enemyHp <= 0)
                 {
-                    _enemyCharacter.Text = "💀";
-                    _enemyHpBar!.Visibility = ViewStates.Invisible;
-                    _gaugeTimer?.Stop();
-                    foreach (var skill in _skills)
-                    {
-                        skill.Button!.Enabled = false;
-                    }
+                    ShowVictory();
                     return;
                 }
             }
@@ -275,7 +272,7 @@ namespace Orroid
                     // プレイヤーにダメージ
                     int damage = new Random().Next(8, 15);
                     _playerHp = Math.Max(0, _playerHp - damage);
-                    UpdatePlayerHpBar();
+                    UpdatePlayerHpText();
 
                     // 敵の攻撃エフェクト
                     _enemyCharacter!.Animate()!
@@ -293,7 +290,8 @@ namespace Orroid
                     // 敗北判定
                     if (_playerHp <= 0)
                     {
-                        _playerHpBar!.Visibility = ViewStates.Invisible;
+                        _playerHpText!.Text = "HP: 0";
+                        _playerHpText.SetTextColor(Color.ParseColor("#ff6b6b"));
                         _gaugeTimer?.Stop();
                         _enemyAttackTimer?.Stop();
                         foreach (var skill in _skills)
@@ -317,16 +315,70 @@ namespace Orroid
             _enemyHpBar.LayoutParameters = layoutParams;
         }
 
-        private void UpdatePlayerHpBar()
+        private void UpdatePlayerHpText()
         {
-            if (_playerHpBar == null || _playerHpBarMaxWidth == 0) return;
+            if (_playerHpText == null) return;
 
-            float hpRatio = (float)_playerHp / PlayerMaxHp;
-            int newWidth = (int)(_playerHpBarMaxWidth * hpRatio);
+            _playerHpText.Text = $"HP: {_playerHp}";
 
-            var layoutParams = _playerHpBar.LayoutParameters;
-            layoutParams!.Width = Math.Max(0, newWidth);
-            _playerHpBar.LayoutParameters = layoutParams;
+            // HPが低くなると色を変更
+            if (_playerHp <= 30)
+            {
+                _playerHpText.SetTextColor(Color.ParseColor("#ff6b6b")); // 赤
+            }
+            else if (_playerHp <= 60)
+            {
+                _playerHpText.SetTextColor(Color.ParseColor("#f39c12")); // オレンジ
+            }
+            else
+            {
+                _playerHpText.SetTextColor(Color.ParseColor("#4CAF50")); // 緑
+            }
+        }
+
+        private void ShowVictory()
+        {
+            // タイマー停止
+            _gaugeTimer?.Stop();
+            _enemyAttackTimer?.Stop();
+
+            // スキル無効化
+            foreach (var skill in _skills)
+            {
+                skill.Button!.Enabled = false;
+            }
+
+            // 報酬計算（ランダム）
+            var random = new Random();
+            int expReward = random.Next(80, 150);
+            int goldReward = random.Next(30, 80);
+
+            // 報酬テキスト設定
+            _expRewardText!.Text = $"EXP: +{expReward}";
+            _goldRewardText!.Text = $"GOLD: +{goldReward}";
+
+            // 敵を消すアニメーション
+            _enemyContainer!.Animate()!
+                .Alpha(0f)
+                .ScaleX(0f).ScaleY(0f)
+                .SetDuration(300)
+                .WithEndAction(new Java.Lang.Runnable(() =>
+                {
+                    _enemyContainer.Visibility = ViewStates.Gone;
+
+                    // 報酬表示
+                    _rewardContainer!.Visibility = ViewStates.Visible;
+                    _rewardContainer.Alpha = 0f;
+                    _rewardContainer.ScaleX = 0.5f;
+                    _rewardContainer.ScaleY = 0.5f;
+
+                    _rewardContainer.Animate()!
+                        .Alpha(1f)
+                        .ScaleX(1f).ScaleY(1f)
+                        .SetDuration(300)
+                        .Start();
+                }))!
+                .Start();
         }
 
         private void GameOver(bool playerWon)

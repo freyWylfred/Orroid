@@ -1,90 +1,96 @@
 # Orroid 🎮
 
-.NET 10 Android バトルゲームアプリ
+A .NET 10 Android battle game app.
 
-## スクリーンショット
+🇯🇵 [日本語版 README](docs/README.ja.md)
+
+## Screenshot
 
 ```
 ┌─────────────────────────┐
-│      - 敵エリア -        │
-│    ████████████████     │  ← 敵HPゲージ
-│         👾              │  ← 敵キャラクター
+│    ████████████████     │  ← Enemy HP Bar
+│         👾              │  ← Enemy
 ├─────────────────────────┤
-│    ████████████████     │  ← プレイヤーHPゲージ
-│                         │
-│   ⚔️    💨    🛡️        │  ← スキルボタン
-│   (●)  (●)  (●)        │  ← 円形ゲージ
-│  連打  速攻  防御        │
-│  切り  切り              │
+│       HP: 100           │  ← Player HP
+│      ┌───────┐          │
+│      │Rapid  │          │  ← Skill with
+│      │Slash  │          │    circular gauge
+│      └───────┘          │
+│      ┌───────┐          │
+│      │Quick  │          │
+│      │Slash  │          │
+│      └───────┘          │
+│      ┌───────┐          │
+│      │Defense│          │
+│      └───────┘          │
 └─────────────────────────┘
 ```
 
-## 機能
+## Features
 
-### 🎯 スキルシステム
-| スキル | アイコン | 効果 | ダメージ |
-|--------|----------|------|----------|
-| 連打切り | ⚔️ | 高ダメージ攻撃 | 20〜35 |
-| 速攻切り | 💨 | 中ダメージ攻撃 | 15〜25 |
-| 防御 | 🛡️ | 次の敵攻撃を無効化 | - |
+### 🎯 Skill System
+| Skill | Effect | Damage |
+|-------|--------|--------|
+| Rapid Slash | High damage attack | 20–35 |
+| Quick Slash | Medium damage attack | 15–25 |
+| Defense | Nullifies the next enemy attack | – |
 
-### ⏱️ ゲージシステム
-- 各スキルに**円形ゲージ**が付属
-- 時間経過で**時計回りにチャージ**（約5秒で満タン）
-- ゲージが満タンになるとスキル使用可能
-- スキル使用後、**他のゲージが-25%**のペナルティ
+### ⏱️ Gauge System
+- Each skill has a **circular gauge** that fills up clockwise over time (~5 seconds)
+- Skills become usable once the gauge is full
+- Using a skill **reduces all other gauges by 25%**
 
-### 👾 敵AI
-- **2秒ごと**に自動攻撃
-- ダメージ: 8〜15
+### 👾 Enemy AI
+- Attacks automatically every **2 seconds**
+- Damage: 8–15
 
-### 🏆 勝敗条件
-- **勝利**: 敵のHPを0にする
-- **敗北**: プレイヤーのHPが0になる
+### 🏆 Win / Lose
+- **Victory**: Reduce the enemy's HP to 0 → enemy disappears, EXP & Gold rewards shown
+- **Defeat**: Player's HP reaches 0
 
-## 技術スタック
+## Tech Stack
 
-- **フレームワーク**: .NET 10 Android
-- **言語**: C# 13
+- **Framework**: .NET 10 Android
+- **Language**: C# 13
 - **UI**: Android Native (XML Layout)
-- **カスタムビュー**: CircularGaugeView（円形プログレス）
+- **Custom View**: CircularGaugeView (circular progress)
 
-## プロジェクト構成
+## Project Structure
 
 ```
 Orroid/
-├── MainActivity.cs          # メインロジック・ゲーム制御
-├── CircularGaugeView.cs     # カスタム円形ゲージ
-├── Orroid.csproj            # プロジェクト設定
+├── MainActivity.cs          # Main game logic
+├── CircularGaugeView.cs     # Custom circular gauge view
+├── Orroid.csproj            # Project configuration
 ├── Resources/
 │   └── layout/
-│       └── activity_main.xml  # UIレイアウト
+│       └── activity_main.xml  # UI layout
 └── ...
 ```
 
-## ビルド方法
+## Build
 
-### 必要環境
-- Visual Studio 2022 (17.12以降)
+### Requirements
+- Visual Studio 2022 (17.12+)
 - .NET 10 SDK
-- Android SDK (API 24以上)
+- Android SDK (API 24+)
 
-### ビルド手順
+### Steps
 ```bash
-# クローン
+# Clone
 git clone https://github.com/freyWylfred/Orroid.git
 cd Orroid
 
-# ビルド
+# Build
 dotnet build
 
-# または Visual Studio で Orroid.slnx を開いてビルド
+# Or open Orroid.slnx in Visual Studio and build from there
 ```
 
-## ライセンス
+## License
 
 [MIT License](LICENSE)
 
-## 作者
+## Author
 
 [@freyWylfred](https://github.com/freyWylfred)

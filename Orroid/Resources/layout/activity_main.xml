@@ -7,25 +7,17 @@
     android:orientation="vertical"
     android:background="#1a1a2e">
 
-    <!-- 上半分: 敵エリア -->
+    <!-- 敵エリア (3) -->
     <FrameLayout
         android:id="@+id/enemyArea"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:background="#16213e">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="- 敵エリア -"
-            android:textColor="#666677"
-            android:textSize="14sp" />
 
         <!-- 敵とHPゲージを縦に配置 -->
         <LinearLayout
+            android:id="@+id/enemyContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -34,18 +26,17 @@
 
             <!-- 敵のHPゲージ（敵の上） -->
             <FrameLayout
-                android:layout_width="200dp"
-                android:layout_height="20dp"
-                android:layout_marginBottom="16dp"
+                android:id="@+id/enemyHpBarContainer"
+                android:layout_width="150dp"
+                android:layout_height="12dp"
+                android:layout_marginBottom="8dp"
                 android:background="#333344">
 
-                <!-- HPゲージ背景 -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#444455" />
 
-                <!-- HPゲージ本体 -->
                 <View
                     android:id="@+id/enemyHpBar"
                     android:layout_width="match_parent"
@@ -60,7 +51,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="👾"
-                android:textSize="80sp" />
+                android:textSize="48sp" />
+
+        </LinearLayout>
+
+        <!-- 報酬表示（初期は非表示） -->
+        <LinearLayout
+            android:id="@+id/rewardContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎉 VICTORY! 🎉"
+                android:textColor="#FFD700"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/expRewardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXP: +100"
+                android:textColor="#4CAF50"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/goldRewardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GOLD: +50"
+                android:textColor="#FFD700"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
 
@@ -72,153 +103,138 @@
         android:layout_height="2dp"
         android:background="#4a4a6a" />
 
-    <!-- 下半分: プレイヤーエリア -->
+    <!-- スキルエリア (7) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="7"
         android:background="#0f0f23"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:orientation="vertical">
 
-        <!-- プレイヤーHPゲージ -->
-        <FrameLayout
-            android:layout_width="200dp"
-            android:layout_height="20dp"
-            android:layout_marginBottom="16dp"
-            android:background="#333344">
-
-            <!-- HPゲージ背景 -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#444455" />
-
-            <!-- HPゲージ本体 -->
-            <View
-                android:id="@+id/playerHpBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#4CAF50" />
-
-        </FrameLayout>
-
-        <!-- スキルボタン群 -->
-        <LinearLayout
+        <!-- プレイヤーHP（数字表示） -->
+        <TextView
+            android:id="@+id/playerHpText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="HP: 100"
+            android:textColor="#4CAF50"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-            <!-- 連打切り -->
+        <!-- スキルリスト（スクロール可能） -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/skillContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center_horizontal"
+                android:paddingVertical="8dp">
 
+                <!-- 連打切り -->
                 <FrameLayout
-                    android:layout_width="80dp"
-                    android:layout_height="80dp">
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginVertical="8dp">
 
                     <Orroid.CircularGaugeView
                         android:id="@+id/gaugeRapidSlash"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
-                    <Button
-                        android:id="@+id/btnRapidSlash"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:text="⚔️"
-                        android:textSize="20sp"
-                        android:enabled="false"
-                        android:background="@android:color/transparent" />
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:background="#80000000">
+
+                        <Button
+                            android:id="@+id/btnRapidSlash"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="連打切り"
+                            android:textSize="14sp"
+                            android:textColor="#ffffff"
+                            android:enabled="false"
+                            android:background="@android:color/transparent" />
+                    </LinearLayout>
                 </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="連打切り"
-                    android:textColor="#aaaaaa"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <!-- 速攻切り -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
+                <!-- 速攻切り -->
                 <FrameLayout
-                    android:layout_width="80dp"
-                    android:layout_height="80dp">
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginVertical="8dp">
 
                     <Orroid.CircularGaugeView
                         android:id="@+id/gaugeQuickSlash"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
-                    <Button
-                        android:id="@+id/btnQuickSlash"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:text="💨"
-                        android:textSize="20sp"
-                        android:enabled="false"
-                        android:background="@android:color/transparent" />
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:background="#80000000">
+
+                        <Button
+                            android:id="@+id/btnQuickSlash"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="速攻切り"
+                            android:textSize="14sp"
+                            android:textColor="#ffffff"
+                            android:enabled="false"
+                            android:background="@android:color/transparent" />
+                    </LinearLayout>
                 </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="速攻切り"
-                    android:textColor="#aaaaaa"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <!-- 防御 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-
+                <!-- 防御 -->
                 <FrameLayout
-                    android:layout_width="80dp"
-                    android:layout_height="80dp">
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginVertical="8dp">
 
                     <Orroid.CircularGaugeView
                         android:id="@+id/gaugeDefense"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
-                    <Button
-                        android:id="@+id/btnDefense"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:text="🛡️"
-                        android:textSize="20sp"
-                        android:enabled="false"
-                        android:background="@android:color/transparent" />
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:background="#80000000">
+
+                        <Button
+                            android:id="@+id/btnDefense"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="防御"
+                            android:textSize="14sp"
+                            android:textColor="#ffffff"
+                            android:enabled="false"
+                            android:background="@android:color/transparent" />
+                    </LinearLayout>
                 </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="防御"
-                    android:textColor="#aaaaaa"
-                    android:textSize="12sp" />
             </LinearLayout>
 
-        </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 
